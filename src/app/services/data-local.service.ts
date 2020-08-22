@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage';
 import { NavController } from '@ionic/angular';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { File as ionFile } from '@ionic-native/file/ngx';
+import { EmailComposer } from '@ionic-native/email-composer/ngx';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class DataLocalService {
 
   guardados:Registro[]=[]
 
-  constructor(private storage:Storage, private natCtrl:NavController, private iab:InAppBrowser , private file:ionFile) { 
+  constructor(private storage:Storage, private natCtrl:NavController, private iab:InAppBrowser , private file:ionFile, private emailComposer:EmailComposer) { 
     this.cargarScans()
   }
 
@@ -81,7 +82,22 @@ export class DataLocalService {
 
   async escribirEnArchivo(texto:string){
     await this.file.writeExistingFile(this.file.dataDirectory,'registros.csv',texto)
+    const archivo = this.file.dataDirectory+'/registros.csv'
     console.log('archivo creado')
+
+    const email = {
+      to: 'ingindustrial.gustavo@gmail.com',
+      cc: 'erika@mustermann.de',
+      bcc: ['john@doe.com', 'jane@doe.com'],
+      attachments: [
+        archivo
+      ],
+      subject: 'Scaneo',
+      body: 'Archivo con scaneos',
+      isHtml: true
+    }
+
+    this.emailComposer.open(email);
   }
 
 
